@@ -2,3 +2,7 @@
 node_modules
 myapp.zip
 config.js
+client/dist/bundle.js
+.env
+.package-lock.json
+.vscode
