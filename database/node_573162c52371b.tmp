@@ -59,7 +59,7 @@ const insertSampleDescriptions = function(recordCount) {
 };
 
 let main = async () => {
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 5; i++) {
     await insertSampleDescriptions(100000)
   }
   await console.timeEnd('Timer')
