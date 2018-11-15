@@ -8,6 +8,7 @@ import normalizePort from 'normalize-port';
 
 var port = normalizePort(process.env.PORT || '8081');
 
+
 class Productdescriptions extends React.Component {
   constructor() {
     super();
@@ -29,8 +30,9 @@ class Productdescriptions extends React.Component {
       //   })
       // })
     // }else{
+      axios.create({baseURL:`http://localhost:${port}`})
         axios
-        .get('http://fectrail-env.k3wc6evxm5.us-east-1.elasticbeanstalk.com/product/data/' + id)
+        .get(`/product/data/` + id)
         //.then(res => res.json())
         .then(productData =>{
           var productData = productData.data;

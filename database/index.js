@@ -11,6 +11,3 @@ mongoose.connect(mongoUri, {
 });
 const db = mongoose.connection;
 module.exports = db;
-
-
-//const db = mongoose.connect(mongoUri, {useNewUrlParser:true});
