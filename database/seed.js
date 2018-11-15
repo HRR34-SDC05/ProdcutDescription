@@ -1,8 +1,13 @@
 const faker = require('faker');
+const fs = require('fs');
+const csv = require('fast-csv');
+const path = require('path')
+
 const db = require('./index.js');
 const Description  = require('./db.js');
 
 const generateRandomDescription = (productId) => {
+  // console.time('Faker')
   productId = productId;
   const productName = faker.commerce.productName;
   const features = []
@@ -20,70 +25,72 @@ const generateRandomDescription = (productId) => {
     techSpecs.push(techSpec)
   }
   const doc = {productId, productName, features, techSpecs}
+  // console.timeEnd('Faker')
   return doc;
 }
 
-
-// const insertSampleDescriptions = function(recordCount) {
-//   console.time('Timer');
-//   const randomDescriptions = [];
-//   for (let i = 0; i < recordCount; i++) {
-//     randomDescriptions.push({insertOne: generateRandomDescription(i)});
-//   }
-//   Description.bulkWrite(randomDescriptions)
-//   .then((res) => {console.log(res.insertedCount)})
-//   .catch((err) => console.error(`There's an error --> `, err))
-//   console.timeEnd('Timer');
-// };
-// insertSampleDescriptions(200000);
-// // for (let i = 0; i < 3; i++) { 
-// //   setTimeout(() => {insertSampleDescriptions(100000)}, 10000)
-// // }
-
-// let promises = []
-// for (let i = 0; i < 10; i++) {
-//   promises.push(new Promise(insertSampleDescriptions(300000)))
-// }
-// Promise.all(promises)
-// .then(()=>{console.log('success')})
-
-//--------------------------------------------------------------//
-
-const insertSampleDescriptions = function(recordCount) {
-  console.time('Timer');
+const insertSampleDescriptions = function(recordCount, idStart = 0) {
+  console.time('Insert')
   const randomDescriptions = [];
-  for (let i = 0; i < recordCount; i++) {
-    randomDescriptions.push({insertOne: generateRandomDescription(i)});
+  for (let i = idStart; i < idStart + recordCount; i++) {
+    let product = generateRandomDescription(i)
+    randomDescriptions.push((product))
+    // randomDescriptions.push({insertOne: {document: product}});
   }
-  return Description.bulkWrite(randomDescriptions)
+  // console.log(`The Descriptions are --> `, JSON.stringify(randomDescriptions))
+  return randomDescriptions
+  // console.log(`record count: ${randomDescriptions.length}, `);
+  // Description.bulkWrite(randomDescriptions)
+  // console.timeEnd('Insert');
 };
 
-let main = async () => {
-  for (let i = 0; i < 100; i++) {
-    await insertSampleDescriptions(100000)
+
+const writeToCSV = function(recordsPerFile, fileCount = 0) {
+  console.time('CSV')
+  let productIdStart = 0
+  for (let i = 0; i < fileCount; i++) {
+    let file = 'sampleData_'.concat(i)
+    console.log(`The file is --> `, file)
+    const writeStream = fs.createWriteStream(file)
+    // csv.write - Expects an array 
+    csv.write(insertSampleDescriptions(recordsPerFile, productIdStart ), {headers:true})
+    .pipe(writeStream);
+    productIdStart += recordsPerFile;
   }
-  await console.timeEnd('Timer')
-  await console.log('success')
+  console.timeEnd('CSV')
 }
 
-main();
 
-// 11213180
-//   100000
-// 11513180
-// let promises = []
-// for (let i = 0; i < 10; i++) {
-//   promises.push(insertSampleDescriptions(300000));
-// }
-// Promise.all(promises)
-// .then((data)=>{
-//   console.log('success', data)
-//   console.timeEnd('Timer')
-// })
-
-//-----------------------------//
+writeToCSV(100000,2)
 
 
 
+let batchLoad = async (batchCount, batchSize) => {
+  console.time('Timer');
+  try{ 
+    let idStart = 0
+    for (i = 0; i < batchCount; i++) {
+      await insertSampleDescriptions(batchSize, idStart)
+      console.log(`Inserted here -->`, batchCount, idStart)
+      idStart += batchSize;
+    }
+  } catch (err) {
+    console.error(`The error is`, err)
+  }
+  await console.timeEnd('Timer')
+  console.log('success')
+}
 
-// insertSampleDescriptions(1000)
+
+// batchLoad(batchCount, batchSize);
+let slowLoad = async (batches) => {
+  console.time('slow')
+  for (let i = 0; i < batches; i++) {
+    await batchLoad(10, 10000)
+  }
+  console.timeEnd('slow')
+}
+// slowLoad(10)
+// if 10 works, can I bump slow load up to 100?
+
+
