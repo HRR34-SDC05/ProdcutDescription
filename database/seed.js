@@ -29,7 +29,7 @@ const generateRandomDescription = (productId) => {
   }
   const doc = {productId, productName, features, techSpecs}
   // console.timeEnd('Faker')
-  console.log(`A document is --> `, doc);
+  // console.log(`A document is --> `, doc);
   return (doc);
 }
 
@@ -57,7 +57,7 @@ const writeToTxt = function (recordCount, fileCount) {
     console.log(`Starting file number --> ${i}`);
     const file = fs.createWriteStream(path.join(__dirname,`sampleData_${i}.txt`))
     for (let j = startingID; j < recordCount + startingID; j++) {
-      let record = JSON.stringify(generateRandomDescription(j));
+      let record = JSON.stringify(generateRandomDescription(j)).concat('\n');
       file.write(record)
     }
     file.end()
@@ -68,11 +68,26 @@ const writeToTxt = function (recordCount, fileCount) {
 
 const readFromTxt = function (fileCount) {
   for (let i = 0; i < fileCount; i++) {
-    const src = fs.createReadStream(path.join(__dirname,`sampleData_${i}.txt`))
-    src.on('readable', () => {
-      console.log(`readable --> ${src.read()}`);
+    const src = fs.createReadStream(path.join(__dirname,`sampleData_0.txt`))
+    let doc ='';
+    src.on('data', (chunk) => {doc += chunk})
+    src.on('end', () => {
+      // console.log(`The complete doc is --> `, doc)
+      // console.log(`The typeof the doc is --> ${typeof doc}`);
+      // console.log(`Doc is --> `, doc.toString('utf8'));
+      // doc = doc.toString('utf8');
+      let recordsArray = doc.split('\n')//
+      recordsArray.pop(); // eliminates the newline on the very last reccord
+      console.log(`PRE ---> The first element in the records array is --> ${recordsArray[0]} and it's type is ${typeof recordsArray[0]}`);
+      recordsArray = recordsArray.map((rec) => {return JSON.parse(rec)});
+      console.log(`POST ---> The first element in the records array is --> ${recordsArray[0]} and it's type is ${typeof recordsArray[0]}`);
+      // JSON.parse(recordsArray.join(''));
+      console.log(`The type of records array is ${typeof recordsArray} and the length is ${recordsArray.length}`);
+      console.log(`The last element in the records array is --> ${recordsArray[recordsArray.length-1]}`)
+      Description.create(recordsArray, (err) => {
+        if (err) {console.log(`There's an error on insert --> `, err)}
+      })
     })
-    src.on('end', () => {console.log(`Readable stream ended`)})
   }
 }
 
@@ -87,7 +102,6 @@ const writeStreamToCSV = function (recordCount, fileCount) {
     }
   }
 }
-
 
 const insertSampleDescriptions = function(recordCount, idStart = 0) {
   console.time('Insert')
@@ -185,14 +199,14 @@ let batchLoad = async (batchCount, batchSize) => {
 
 
 
-let recordCount = 10;
-let fileCount = 2;
+let recordCount = 1000;
+let fileCount = 1;
+// writeToTxt(recordCount, fileCount)
+readFromTxt(fileCount);
 // writeStreamToCSV(recordCount, fileCount)
-writeToTxt(recordCount, fileCount)
 // writeToCSV(recordCount, fileCount)
 // loadCSVToMongo(fileCount)
 // createBatch(recordCount,0)
-// readFromTxt(fileCount);
 
 //write a stream to CSV
   // The stream generates a random piece of data
