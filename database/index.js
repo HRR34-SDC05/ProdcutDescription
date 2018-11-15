@@ -5,7 +5,7 @@ const mongoUri = 'mongodb://localhost:27017/trailblazer';
 mongoose.connect(mongoUri, {
   useNewUrlParser:true,
   keepAlive: true,
-  poolSize: 1000,
+  poolSize: 10,
   connectTimeoutMS: 100000,
   socketTimeoutMS: 200000
 });
