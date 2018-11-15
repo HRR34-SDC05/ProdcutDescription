@@ -36,4 +36,11 @@ From within the root directory:
 npm install -g webpack
 npm install
 ```
+### Seed Database
+
+For testing and development purposes, it may be useful to seed the database.
+
+Scripts have been included to aid in this process.
+
+After installing dependencies and proceeding through the usage steps, run the following script: `npm run db:setup`
 
