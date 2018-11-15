@@ -12,7 +12,7 @@
     "start": "node server/index.js",
     "webstart": "webpack -d --watch",
     "webstartp": "webpack -p --watch",
-    "db:setup": "node database/seed.js",
+    "db:setup": "node --max-old-space-size=8192 database/seed.js",
     "seed:server": "node  --max-old-space-size=8192 server/index.js"
   },
   "dependencies": {
@@ -36,6 +36,7 @@
     "enzyme-adapter-react-16": "^1.6.0",
     "eslint-config-hackreactor": "git://github.com/reactorcore/eslint-config-hackreactor",
     "faker": "^4.1.0",
+    "fs": "0.0.1-security",
     "jest": "^23.6.0",
     "mocha": "^5.2.0",
     "webpack": "^4.23.0",
