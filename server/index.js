@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 //const = require('../database/.js');
-const database = require('../database/db.js');
+const mongoDB = require('../database/db.js'); // Mongoose model == mongoDB
+// const postgreSQL = require ('../database/pg.js'); // Sequelize model == postgreSQL
 const normalizePort = require('normalize-port');
 
 var port = normalizePort(process.env.PORT || '8081');
@@ -26,33 +27,89 @@ app.listen(port, function() {
   console.log(`listening on port ${port}`);
 });
 
+app.get('/product/:productId', function (req, res) {
+  res.sendFile(path.join(__dirname + '/../client/dist/index.html'));
+});
 
+// ------ CRUD ------ //
+
+// ------ CREATE ------ //
+app.post('/product/data/:productId', function (req, res) {
+  mongoDB.create({
+    productName: req.body.productId,
+    productId: req.body.productId,
+    features: req.body.features,
+    techSpecs: req.body.techSpecs
+  })
+  .then(message => res.status(201).send(message))
+  .catch(err => console.error(`There was an error with the POST request --> ${err}`));
+  // Add a PG create
+})
+
+
+// ------ READ ------ //
 app.get('/productdescriptions', function (req, res) {
   console.log("GET REQUEST for product descriptions");
-  database.find({}, (err, data) => {
+  mongoDB.find({}, (err, data) => {
     if(err){
       console.log("ERROR:", err);
     }else{
       res.status(200).send(data);
     }
   });
+  // Add PG Find
 });
-
-app.get('/product/:productId', function (req, res) {
-  res.sendFile(path.join(__dirname + '/../client/dist/index.html'));
-});
-
 
 app.get('/product/data/:productId', function (req, res) {
   var productId = req.params.productId;
   console.log(`GET REQUEST for product Id ${productId}`);
-  database.findOne({productId: productId}, (err, productData) => {
+  mongoDB.findOne({productId: productId}, (err, productData) => {
     if(err){
       console.log("ERROR:", err);
     }else{
       console.log("GOT DATA");
-      //console.log(productData);
       res.status(200).send(productData);
     }
   });
+  // Add PG FindOne
 });
+
+
+// ------ UPDATE ------ //
+app.put('/product/data/:productId', function (req, res) {
+  var productId = req.params.productId;
+  mongoDB.updateOne({ productId: productId }, req.body, (err, response) => {
+    if (err) {
+      console.error(`There was an error with the PUT request --> ${err}`)
+    } else {
+      res.status(200).send(response)
+    }
+  })
+  // Add PG updateOne
+})
+
+app.patch('/product/data/:productId', function (req, res) {
+  var productId = req.params.productId;
+  mongoDB.updateOne({ productId: productId }, req.body, (err, response) => {
+    if (err) {
+      console.error(`There was an error with the PUT request --> ${err}`)
+    } else {
+      res.status(200).send(response)
+    }
+  })
+  // Add PG updateOne
+})
+
+
+// ------ DELETE ------ //
+app.delete('/product/data/:productId', function (req, res) {
+  var productId = req.params.productId;
+  mongoDB.deleteOne({productId: productId}, (err, res) => {
+    if (err) {
+      console.error(`There was an error with the DELETE --> ${err}`);
+    } else {
+      res.status(202).send()
+    }
+  })
+  // Add PG DeleteOne
+})
