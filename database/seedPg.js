@@ -31,30 +31,33 @@ client.connect();
 
 // ------------------ Insert X Records Into PG ------------------ //
 
-const insertRecords = async (idStart, idEnd, batchCount = 1) => {
+const insertRecords = async (idStart, idEnd) => {
   console.time('Insert Records to PG')
-  let batchSize = Math.floor((idEnd - idStart)/batchCount);
-  let start = idStart;
-  let end = start + batchSize;
-  for (let i = 0; i <= batchCount; i++) {
-    // console.log(chalk.green(`The current batch is ${i}`));
-    // console.log(`The starting ID is ${start} and ending ID is ${end}`);
-    for (let i = start; i <= end ; i++) {
+  return new Promise((resolve, reject) => {
+    for (let i = idStart; i <= idEnd ; i++) {
       let record = generateRandomDescription(i)
       const insertQueryText = `INSERT INTO ${table} (${fields}) VALUES ($1, $2, $3, $4) RETURNING *`;
       const insertQueryValues = [record.productId, record.productName, record.features, record.techSpecs];
-      client.query(insertQueryText, insertQueryValues)
-      // .then(res => console.log(res))
-      .catch(err => console.error(chalk.red(`There was an error! --> `), err))
+      resolve(client.query(insertQueryText, insertQueryValues)
+                .catch(err => console.error(chalk.red(`There was an error! --> `), err)));
     }
-    start = end + 1;
-    end += batchSize;
-  }
-  console.timeEnd('Insert Records to PG');
+    console.timeEnd('Insert Records to PG');
+  })
 }
 
 // -------------------------------------------------------------- //
 
-insertRecords(1, 100000, 1000)
+const createABatch = async (totalRecordCount, batchCount) => {
+  let batchSize = Math.floor(totalRecordCount/batchCount);
+  let start = 1;
+  let end = batchSize;
+  for (let i = 0; i < batchCount; i++) {
+    await insertRecords(start, end)
+    start = end + 1;
+    end += batchSize;
+  }
+}
+// insertRecords(1, 100000, 1000)
+createABatch(10000000, 1000)
 
 module.exports.insertRecords = insertRecords;
