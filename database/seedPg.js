@@ -39,7 +39,7 @@ const insertRecords = async (idStart, idEnd) => {
       const insertQueryText = `INSERT INTO ${table} (${fields}) VALUES ($1, $2, $3, $4) RETURNING *`;
       const insertQueryValues = [record.productId, record.productName, record.features, record.techSpecs];
       resolve(client.query(insertQueryText, insertQueryValues)
-                .catch(err => console.error(chalk.red(`There was an error! --> `), err)));
+        .catch(err => console.error(chalk.red(`There was an error! --> `), err)));
     }
     console.timeEnd('Insert Records to PG');
   })
@@ -47,7 +47,7 @@ const insertRecords = async (idStart, idEnd) => {
 
 // -------------------------------------------------------------- //
 
-const createABatch = async (totalRecordCount, batchCount) => {
+const createAPGBatch = async (totalRecordCount, batchCount) => {
   let batchSize = Math.floor(totalRecordCount/batchCount);
   let start = 1;
   let end = batchSize;
@@ -58,6 +58,7 @@ const createABatch = async (totalRecordCount, batchCount) => {
   }
 }
 // insertRecords(1, 100000, 1000)
-createABatch(10000000, 1000)
+// createAPGBatch(10000000, 1000)
 
 module.exports.insertRecords = insertRecords;
+module.exports.createAPGBatch = createAPGBatch;
