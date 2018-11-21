@@ -1,11 +1,8 @@
 const chalk = require('chalk');
-const db = require('./index.js');
-const Description  = require('./db.js');
-const { generateRandomDescription } = require ('./generateSampleRecords.js')
 
-// ---------- To Do ---------- //
-// [x] 1. Refactor to have batch size and total record count (a la seedPg.js)
-// [x] 2. Refactor to do bulkWrite (not .create) -- check Mongoose documentation for appropriate format
+const db = require('../connectMongo.js');
+const Description  = require('../describeMongo.js');
+const { generateRandomDescription } = require ('./generateSampleRecords.js')
 
 // ------------------ Query Builder ------------------ //
 const buildQuery = (recordstoCreate) => {
@@ -15,13 +12,11 @@ const buildQuery = (recordstoCreate) => {
 // ------------------ Insert X Records Into Mongo ------------------ //
 const insertMongoRecords = async function (idStart, idEnd) {
   return new Promise ((resolve, reject) => {
-    console.time('createABatch')
     let generatedRecords = [];
     for (let i = idStart; i <= idEnd; i++) {
       generatedRecords.push(generateRandomDescription(i));
     }
     resolve(Description.bulkWrite(buildQuery(generatedRecords))
-      .then(() => {return console.timeEnd('createABatch')})
       .catch((err) => console.error(chalk.red(`There was an error! -->`), err)))
   })
 }
@@ -46,7 +41,5 @@ const createAMongoBatch = async (totalRecordCount, batchCount) => {
 //Example Use:
 // createAMongoBatch(10000000, 1000)
 // Adds 10m records to Mongo in 1000 batches of 10,000;
-
-createAMongoBatch(1000000, 100);
 
 module.exports.createAMongoBatch = createAMongoBatch; 

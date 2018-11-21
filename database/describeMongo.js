@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const db = require('./index.js');
+const db = require('./connectMongo.js');
 mongoose.Promise = global.Promise;
 
 const descriptionSchema = new mongoose.Schema({

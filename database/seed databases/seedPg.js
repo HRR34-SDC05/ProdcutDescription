@@ -1,23 +1,8 @@
-const { Client } = require('pg');
 const chalk = require('chalk');
 
-const config = require('../config.json')
+const client = require('../connectPg');
+const { table, fields } = require('../describePg');
 const { generateRandomDescription } = require('./generateSampleRecords.js');
-
-// ------------------ Connect to PG ------------------ //
-const table = 'descriptions';
-const fields = 'product_id, product_name, features, tech_specs'
-const host = config.host;
-const user = config.username;
-const pw = config.password;
-const db = config.database;
-const port = config.port;
-const conString = `postgres://${user}:${pw}@${host}:${port}/${db}`;
-
-const client = new Client({
-  connectionString: conString,
-});
-client.connect();
 
 // ------------------ Query Builder ------------------ //
 const buildQuery = (insertStatement, records) => {
@@ -38,7 +23,7 @@ const buildQuery = (insertStatement, records) => {
 }
 
 // ------------------ Insert X Records Into PG ------------------ //
-const insertRecords = async (idStart, idEnd) => {
+const insertPGRecords = async (idStart, idEnd) => {
   return new Promise((resolve, reject) => {
     let generatedRecords = [];
     for (let i = idStart; i <= idEnd ; i++) {
@@ -52,21 +37,23 @@ const insertRecords = async (idStart, idEnd) => {
 // ------------------ Create A Batch Of Records ------------------ //
 const createAPGBatch = async (totalRecordCount, batchCount) => {
   // Max recommended batch is 10,000 records;
+  client.connect();
   console.time('BatchRun')
   let batchSize = Math.floor(totalRecordCount / batchCount);
   let start = 1;
   let end = batchSize;
   for (let i = 0; i < batchCount; i++) {
-    await insertRecords(start, end)
+    await insertPGRecords(start, end)
     start = end + 1;
     end += batchSize;
   }
   console.timeEnd('BatchRun');
-  console.log(`The BatchRun added ${totalRecordCount} records in ${batchCount} batches.`);
+  console.log(chalk.green(`The BatchRun added ${totalRecordCount} records in ${batchCount} batches.`));
   client.end();
 }
 
- createAPGBatch(100, 1)
+//Example Use:
+// createAPGBatch(10000000, 1000)
+// Adds 10m records to Postgres in 1000 batches of 10,000;
 
-module.exports.insertRecords = insertRecords;
 module.exports.createAPGBatch = createAPGBatch;
