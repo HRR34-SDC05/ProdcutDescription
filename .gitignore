@@ -2,8 +2,8 @@
 node_modules
 myapp.zip
 config.js
+config.json
 client/dist/bundle.js
 .env
 .package-lock.json
 .vscode
-database/sampleData/*

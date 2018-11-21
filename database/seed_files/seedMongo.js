@@ -28,7 +28,6 @@ const createAMongoBatch = async (totalRecordCount, batchCount) => {
   let start = 1;
   let end = batchSize;
   for (let i = 0; i < batchCount; i++) {
-    console.log(`The start value is ${start}, and end is ${end}`)
     await insertMongoRecords(start, end);
     start = end + 1;
     end += batchSize;
