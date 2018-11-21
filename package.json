@@ -12,7 +12,7 @@
     "start": "node server/index.js",
     "webstart": "webpack -d --watch",
     "webstartp": "webpack -p --watch",
-    "seed:db": "node --max-old-space-size=8192 database/seed databases/seedDBs.js"
+    "seed:db": "node --max-old-space-size=8192 database/seedFiles/seedDBs.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
