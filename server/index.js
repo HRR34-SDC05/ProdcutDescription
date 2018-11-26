@@ -1,8 +1,9 @@
+require('newrelic');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 //const = require('../database/.js');
-const mongoDB = require('../database/db.js'); // Mongoose model == mongoDB
+const mongoDB = require('../database/describeMongo.js'); // Mongoose model == mongoDB
 // const postgreSQL = require ('../database/pg.js'); // Sequelize model == postgreSQL
 const normalizePort = require('normalize-port');
 
@@ -62,6 +63,7 @@ app.get('/productdescriptions', function (req, res) {
 
 app.get('/product/data/:productId', function (req, res) {
   var productId = req.params.productId;
+  console.time('API GET')
   console.log(`GET REQUEST for product Id ${productId}`);
   mongoDB.findOne({productId: productId}, (err, productData) => {
     if(err){
@@ -72,6 +74,7 @@ app.get('/product/data/:productId', function (req, res) {
     }
   });
   // Add PG FindOne
+  console.timeEnd('API GET');
 });
 
 

@@ -20,6 +20,7 @@
     "express": "^4.16.4",
     "merge": "^1.2.1",
     "mongoose": "^5.3.6",
+    "newrelic": "^4.11.0",
     "normalize-port": "^1.0.0",
     "pg": "^7.6.1",
     "react": "^16.6.0",
