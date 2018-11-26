@@ -1,9 +1,9 @@
 {
-  "name": "",
-  "version": "",
-  "description": "",
-  "author": "",
-  "license": "",
+  "name": "trailblazer-descriptions",
+  "version": "1.0.0",
+  "description": "The descriptions of products in Trailblazer",
+  "author": "Stephen Weiss <scweiss1@gmail.com>",
+  "license": "MIT",
   "engines": {
     "node": ">=6.13.0"
   },
@@ -12,8 +12,7 @@
     "start": "node server/index.js",
     "webstart": "webpack -d --watch",
     "webstartp": "webpack -p --watch",
-    "seed:files": "node --max-old-space-size=8192 database/seedCreateFiles.js",
-    "seed:db": "node --max-old-space-size=8192 database/seedWriteToDB.js"
+    "seed:db": "node --max-old-space-size=8192 database/seed_files/seedDBs.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -22,6 +21,7 @@
     "merge": "^1.2.1",
     "mongoose": "^5.3.6",
     "normalize-port": "^1.0.0",
+    "pg": "^7.6.1",
     "react": "^16.6.0",
     "react-dom": "^16.6.0"
   },
@@ -32,6 +32,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-loader": "^8.0.4",
     "chai": "^4.2.0",
+    "chalk": "^2.4.1",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.6.0",
     "eslint-config-hackreactor": "git://github.com/reactorcore/eslint-config-hackreactor",
