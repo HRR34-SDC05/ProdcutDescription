@@ -8,3 +8,5 @@ client/dist/bundle.js
 .package-lock.json
 .vscode
 .DS_Store
+newrelic.js
+newrelic
