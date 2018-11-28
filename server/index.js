@@ -4,14 +4,14 @@ const bodyParser = require('body-parser');
 const path = require('path');
 //const = require('../database/.js');
 const mongoDB = require('../database/describeMongo.js'); // Mongoose model == mongoDB
-// const postgreSQL = require ('../database/pg.js'); // Sequelize model == postgreSQL
+const postgreSQL = require ('../database/connectPg.js'); // Sequelize model == postgreSQL
 const normalizePort = require('normalize-port');
 
 var port = normalizePort(process.env.PORT || '8081');
 
 let app = express();
 
-
+postgreSQL.connect();
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -36,6 +36,7 @@ app.get('/product/:productId', function (req, res) {
 
 // ------ CREATE ------ //
 app.post('/product/data/:productId', function (req, res) {
+  // Mongo create
   mongoDB.create({
     productName: req.body.productId,
     productId: req.body.productId,
@@ -44,37 +45,56 @@ app.post('/product/data/:productId', function (req, res) {
   })
   .then(message => res.status(201).send(message))
   .catch(err => console.error(`There was an error with the POST request --> ${err}`));
-  // Add a PG create
+  // PG create
 })
 
 
 // ------ READ ------ //
 app.get('/productdescriptions', function (req, res) {
   console.log("GET REQUEST for product descriptions");
-  mongoDB.find({}, (err, data) => {
-    if(err){
-      console.log("ERROR:", err);
-    }else{
-      res.status(200).send(data);
-    }
-  });
-  // Add PG Find
+  // Mongo find
+  // mongoDB.find({}, (err, data) => {
+  //   if(err) {
+  //     console.log("ERROR:", err);
+  //   } else {
+  //     res.status(200).send(data);
+  //   }
+  // });
+  // PG Find
+  postgreSQL.query(`SELECT * FROM descriptions LIMIT 10`)
+    .then((result) => res.status(200).send(result.rows))
+    .catch((err) => res.status(500).send('Could not complete GET request to Database', err))
 });
 
 app.get('/product/data/:productId', function (req, res) {
+  console.log(` --> Received request on port ${port} <--`);
   var productId = req.params.productId;
-  console.time('API GET')
+  // console.time('API Inside')
+  // console.time('API GET')
   console.log(`GET REQUEST for product Id ${productId}`);
-  mongoDB.findOne({productId: productId}, (err, productData) => {
-    if(err){
-      console.log("ERROR:", err);
-    }else{
-      console.log("GOT DATA");
-      res.status(200).send(productData);
-    }
-  });
-  // Add PG FindOne
-  console.timeEnd('API GET');
+  // Mongo Find Id
+  // mongoDB.find({productId: productId}, (err, productData) => {
+  //   if(err){
+  //     console.log("ERROR:", err);
+  //   }else{
+  //     // console.log("GOT DATA");
+  //     res.status(200).send(productData);
+  //     // console.log(`productData inside CB --> `, productData);
+  //     console.timeEnd('API Inside')
+  //   }
+  // })
+  // .then(() => {return console.timeEnd('API GET');});
+  // PG Find Id
+  postgreSQL.query(`SELECT * FROM descriptions WHERE product_id = ${productId}`)
+    .then((result) => {
+      // result.rows[0].tech_specs = JSON.parse(result.rows[0].tech_specs);
+      // console.log(`The TechSpecs are --> `, result.rows[0].tech_specs);
+      res.status(200).send(result.rows)
+      // console.timeEnd('API Inside')
+    })
+    // .then( () => console.timeEnd('API GET'))
+    .catch((err) => res.status(500).send('Could not complete GET request to Database', err))
+
 });
 
 
