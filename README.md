@@ -18,6 +18,11 @@
 ## Usage
 
 > Some usage instructions
+Before running the application for the first time, be sure to repack the bundle
+> `npm run webstart`
+
+Once this is in place, you will be able to start the application with a node server.
+> `npm start`
 
 ## Requirements
 

@@ -1,12 +1,13 @@
 const { Client } = require('pg');
-
 const config = require('../config.json')
 
-const host = config.host;
-const user = config.username;
-const pw = config.password;
-const db = config.database;
-const port = config.port;
+const environment = "production" // options are 'development' or 'production'
+
+const host = config[environment].host;
+const user = config[environment].username;
+const pw = config[environment].password;
+const db = config[environment].database;
+const port = config[environment].port;
 const conString = `postgres://${user}:${pw}@${host}:${port}/${db}`;
 
 const client = new Client({
