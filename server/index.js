@@ -48,15 +48,15 @@ app.post('/product/data/:productId', function (req, res) {
 // ------ READ ------ //
 app.get('/productdescriptions', function (req, res) {
   postgreSQL.query(`SELECT * FROM descriptions LIMIT 10`)
-    .then((result) => res.status(200).send(result.rows))
-    .catch((err) => res.status(500).send('Could not complete GET request to Database', err))
+  .then((result) => res.status(200).send(result.rows))
+  .catch((err) => res.status(500).send('Could not complete GET request to Database', err))
 });
 
 app.get('/product/data/:productId', function (req, res) {
   var productId = req.params.productId;
   postgreSQL.query(`SELECT * FROM descriptions WHERE product_id = ${productId}`)
-    .then((result) => res.status(200).send(result.rows))
-    .catch((err) => res.status(500).send('Could not complete GET request to Database', err))
+  .then((result) => res.status(200).send(result.rows))
+  .catch((err) => res.status(500).send('Could not complete GET request to Database', err))
 });
 
 // ------ UPDATE ------ //
