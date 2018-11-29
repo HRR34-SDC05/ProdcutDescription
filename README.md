@@ -19,7 +19,9 @@ This service presents users with product descriptions for a specific product.
 
 > Some usage instructions
 Before running the application for the first time, be sure to repack the bundle
-> `npm run webstart`
+> `npm run webstart` or
+> `npm run webstartp`
+The latter will minimize the code using webpack.
 
 Once this is in place, you will be able to start the application with a node server.
 > `npm start`
