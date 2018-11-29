@@ -12,3 +12,5 @@ module.exports.fields = fields;
 //   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 //   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 // );
+
+// NOTE: Field type JSONB is a psql v10 addition. If you're using a version *before* v10, update to JSON
