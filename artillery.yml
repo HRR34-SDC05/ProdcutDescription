@@ -3,6 +3,11 @@ config:
   phases:
     - duration: 60
       arrivalRate: 20
+    - duration: 120
+      arrivalRate: 5
+      rampTo: 50
+    - duration: 600
+      arrivalRate: 100
   defaults:
     headers:
       x-my-service-auth: '987401838271002188298567'
@@ -10,6 +15,7 @@ scenarios:
   - flow:
     - get:
         url: "/product/80"
-    - think: 3
     - get: 
         url: "/product/80828"
+    - get: 
+        url: "/product/5789271"
