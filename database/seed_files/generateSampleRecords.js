@@ -8,7 +8,7 @@ const generateRandomDescription = (productId) => {
   for (let i = 0; i < featureCount; i++) {
     features.push(faker.commerce.productAdjective())
   }
-  const techSpecs = []
+  let techSpecs = []
   const techSpecCount = faker.random.number({min: 3, max: 5})
   for (let i = 0; i < techSpecCount; i++) { 
     let type = faker.lorem.word();
@@ -17,6 +17,7 @@ const generateRandomDescription = (productId) => {
     let techSpec = {type, description, measurement};
     techSpecs.push(techSpec)
   }
+  techSpecs = JSON.stringify(techSpecs);
   const doc = {productId, productName, features, techSpecs}
   return (doc);
 }

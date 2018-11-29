@@ -1,16 +1,15 @@
+require('newrelic');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-//const = require('../database/.js');
-const mongoDB = require('../database/db.js'); // Mongoose model == mongoDB
-// const postgreSQL = require ('../database/pg.js'); // Sequelize model == postgreSQL
+const postgreSQL = require ('../database/connectPg.js'); // Sequelize model == postgreSQL
 const normalizePort = require('normalize-port');
 
 var port = normalizePort(process.env.PORT || '8081');
 
 let app = express();
 
-
+postgreSQL.connect();
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -35,81 +34,49 @@ app.get('/product/:productId', function (req, res) {
 
 // ------ CREATE ------ //
 app.post('/product/data/:productId', function (req, res) {
-  mongoDB.create({
-    productName: req.body.productId,
-    productId: req.body.productId,
+  postgreSQL.create({
+    product_name: req.body.productName,
+    product_id: req.body.productId,
     features: req.body.features,
-    techSpecs: req.body.techSpecs
+    tech_specs: req.body.techSpecs
   })
   .then(message => res.status(201).send(message))
   .catch(err => console.error(`There was an error with the POST request --> ${err}`));
-  // Add a PG create
 })
 
 
 // ------ READ ------ //
 app.get('/productdescriptions', function (req, res) {
-  console.log("GET REQUEST for product descriptions");
-  mongoDB.find({}, (err, data) => {
-    if(err){
-      console.log("ERROR:", err);
-    }else{
-      res.status(200).send(data);
-    }
-  });
-  // Add PG Find
+  postgreSQL.query(`SELECT * FROM descriptions LIMIT 10`)
+    .then((result) => res.status(200).send(result.rows))
+    .catch((err) => res.status(500).send('Could not complete GET request to Database', err))
 });
 
 app.get('/product/data/:productId', function (req, res) {
   var productId = req.params.productId;
-  console.log(`GET REQUEST for product Id ${productId}`);
-  mongoDB.findOne({productId: productId}, (err, productData) => {
-    if(err){
-      console.log("ERROR:", err);
-    }else{
-      console.log("GOT DATA");
-      res.status(200).send(productData);
-    }
-  });
-  // Add PG FindOne
+  postgreSQL.query(`SELECT * FROM descriptions WHERE product_id = ${productId}`)
+    .then((result) => res.status(200).send(result.rows))
+    .catch((err) => res.status(500).send('Could not complete GET request to Database', err))
 });
-
 
 // ------ UPDATE ------ //
 app.put('/product/data/:productId', function (req, res) {
   var productId = req.params.productId;
-  mongoDB.updateOne({ productId: productId }, req.body, (err, response) => {
-    if (err) {
-      console.error(`There was an error with the PUT request --> ${err}`)
-    } else {
-      res.status(200).send(response)
-    }
-  })
-  // Add PG updateOne
-})
-
-app.patch('/product/data/:productId', function (req, res) {
-  var productId = req.params.productId;
-  mongoDB.updateOne({ productId: productId }, req.body, (err, response) => {
-    if (err) {
-      console.error(`There was an error with the PUT request --> ${err}`)
-    } else {
-      res.status(200).send(response)
-    }
-  })
-  // Add PG updateOne
+  postgreSQL.update(
+    { 
+      product_name: req.body.productName,
+      features: req.body.features,
+      tech_specs: req.body.techSpecs
+    },
+    { where: {product_id: productId}}
+    )
+    .then((result) => res.status(200).send(result))
+    .catch((err) => res.status(500).send(`There was an error with the PUT request --> ${err}`))
 })
 
 
 // ------ DELETE ------ //
 app.delete('/product/data/:productId', function (req, res) {
   var productId = req.params.productId;
-  mongoDB.deleteOne({productId: productId}, (err, res) => {
-    if (err) {
-      console.error(`There was an error with the DELETE --> ${err}`);
-    } else {
-      res.status(202).send()
-    }
-  })
-  // Add PG DeleteOne
+  postgreSQL.destroy({ where: { product_id: productId } })
 })
