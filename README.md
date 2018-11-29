@@ -1,6 +1,6 @@
 # Project Name
 
-> Project description
+This service presents users with product descriptions for a specific product. 
 
 ## Related Projects
 
