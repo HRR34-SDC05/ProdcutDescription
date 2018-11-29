@@ -48,7 +48,7 @@ const createAPGBatch = async (totalRecordCount, batchCount) => {
     end += batchSize;
   }
   console.timeEnd('BatchRun');
-  console.log(chalk.green(`The BatchRun added ${totalRecordCount} records in ${batchCount} batches.`));
+  console.log(chalk.green(`The BatchRun attempted to add ${totalRecordCount} records in ${batchCount} batches.`));
   client.end();
 }
 
