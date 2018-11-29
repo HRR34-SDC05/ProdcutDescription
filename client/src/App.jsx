@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import normalizePort from 'normalize-port';
 
 import Features from './components/Features.jsx';
 import TechSpecs from './components/TechSpecs.jsx';
-import normalizePort from 'normalize-port';
+import config from '../../config.json'
 
-var port = normalizePort(process.env.PORT || '8081');
+const environment = config.currentEnvironment;
+const host = config[environment].svc_host;
+const port = normalizePort(process.env.PORT || '8081');
 
 
 class Productdescriptions extends React.Component {
@@ -21,7 +24,7 @@ class Productdescriptions extends React.Component {
 
   componentDidMount(){
     let id = window.location.pathname.replace(/\/product\//,'');
-    let instance = axios.create({baseURL:`http://localhost:${port}`})
+    let instance = axios.create({baseURL:`http://${host}:${port}`})
     instance
       .get(`/product/data/` + id)
       .then(productData => {
