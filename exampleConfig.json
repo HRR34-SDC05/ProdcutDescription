@@ -1,0 +1,21 @@
+{ 
+  "currentEnvironment": "production",
+  "development" : 
+  {
+    "db_database":"your_database",
+    "db_username":"your_user",
+    "db_password":"your_password",
+    "db_port":"5432",
+    "db_host":"localhost",
+    "svc_host": "localhost"
+  },
+  "production" :
+  {
+    "db_database":"your_database",
+    "db_username":"your_user",
+    "db_password":"your_password",
+    "db_port":"5432",
+    "db_host":"db_remote_host.com",
+    "svc_host": "servicie_remote_host.com"
+  }
+}

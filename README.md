@@ -17,10 +17,18 @@ This service presents users with product descriptions for a specific product.
 
 ## Usage
 
-> Some usage instructions
+### Update Bundle
 Before running the application for the first time, be sure to repack the bundle
 > `npm run webstart`
 
+### Create a Config File
+An example configuration file has been provided for your convenience in the root directory (`exampleConfig.json`).
+
+1. Make a copy of the `exampleConfig.json` file
+2. Rename the copy to `config.json`
+3. Update the details of the `config.json` for your needs.
+
+### Run the service
 Once this is in place, you will be able to start the application with a node server.
 > `npm start`
 
